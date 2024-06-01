@@ -1,7 +1,7 @@
 import os
 import cv2 as cv
 
-img = cv.imread(os.path.join('..','data','cowd.jpg'))
+img = cv.imread(os.path.join('..','data','cow.jpg'))
 
 kernel_size = 5
 
