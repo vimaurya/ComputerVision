@@ -1,20 +1,26 @@
 import os
+import pickle
+
 import numpy as np
 from skimage.io import imread
 from skimage.transform import resize
+from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVC
 
 # prepare data
-input_dir = os.path.join('..', 'data', 'clf-data')
 
-categories = ['empty', 'not-empty']
+# clf-data = "https://drive.google.com/drive/folders/1CjEFWihRqTLNUnYRwHXxGAVwSXF2k8QC"
+input_dir = "C:\large_files\clf-data"
+
+categories = ['empty', 'not_empty']
 
 data = []
 labels = []
 
 for category_idx, category in enumerate(categories):
+    print(os.path.join(input_dir, category))
     for file in os.listdir(os.path.join(input_dir, category)):
         img_path = os.path.join(input_dir, category, file)
         img = imread(img_path)
@@ -22,7 +28,8 @@ for category_idx, category in enumerate(categories):
 
         data.append(img.flatten())
         labels.append(category_idx)
-        print('appending done.')
+
+    print("{} Category : Finished".format(category))
 
 data = np.asarray(data)
 labels = np.asarray(labels)
@@ -39,3 +46,20 @@ grid_search = GridSearchCV(classifier, parameters)
 
 grid_search.fit(x_train, y_train)
 
+# test performance
+best_estimator = grid_search.best_estimator_
+
+y_prediction = best_estimator.predict(x_test)
+
+score = accuracy_score(y_prediction, y_test)
+
+print("{}% of samples were correctly classified".format(str(score * 100)))
+
+save_path = "..//models"
+
+if not os.path.exists(save_path):
+    os.makedirs(save_path)
+
+model = os.path.join(save_path, 'model1.p')
+
+pickle.dump(best_estimator, open(model, 'wb'))
