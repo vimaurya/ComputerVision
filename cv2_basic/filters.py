@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-e
+
 image = cv2.imread('../data/bear.jpg')
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
@@ -24,5 +24,3 @@ plt.subplot(234), plt.imshow(laplacian, cmap='gray'), plt.title('Laplacian Edge 
 plt.subplot(235), plt.imshow(median), plt.title('Median Filter')
 
 plt.show()
-
-#%%
