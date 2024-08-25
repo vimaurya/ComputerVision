@@ -5,6 +5,8 @@ from torchvision import transforms
 from torch import nn
 from torch.utils.data import DataLoader
 import sys
+import random
+import shutil
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -153,3 +155,25 @@ def test(model: torch.nn.Module, data_loader: torch.utils.data.DataLoader, loss_
         test_acc /= len(data_loader)
 
         print(f"Test loss : {test_loss:.3f}, test acc : {test_acc:.2f}%")
+
+
+def split_data(category, dir, split_ratio):
+    category_path = os.path.join(dir, category)
+    images = os.listdir(category_path)
+    random.shuffle(images)
+
+    train_dir = os.path.join(dir, 'train')
+    test_dir = os.path.join(dir, 'test')
+
+    os.makedirs(os.path.join(train_dir, category), exist_ok=True)
+    os.makedirs(os.path.join(test_dir, category), exist_ok=True)
+
+    split_point = int(len(images) * split_ratio)
+    train_images = images[:split_point]
+    test_images = images[split_point:]
+
+    for image in train_images:
+        shutil.move(os.path.join(category_path, image), os.path.join(train_dir, category, image))
+
+    for image in test_images:
+        shutil.move(os.path.join(category_path, image), os.path.join(test_dir, category, image))
